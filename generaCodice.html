@@ -72,7 +72,7 @@
         <div class="col-lg">
           <h2>Generazione Codice</h2>
           <h3>Seleziona un elemento dalla lista</h3>
-          <small>la generazione del codice avvine localmente!</small>
+          <small>La generazione del codice avvine localmente!</small>
           <input class="form-control" type="text" id="id" readonly />
 
           <div class="input-group mb-3">
@@ -87,11 +87,20 @@
               readonly
             />
           </div>
+
+          <h2>Verifica codice</h2>
+          <h3>Inserisci il codice generato dall'aplicazione</h3>
+          <small>si corrisposnde a quello generato sopra</small>
+          <input class="form-control" type="text" id="verificaCodcie" />
+          <button class="btn btn-primary" id="verificaCodiceFtn">
+            Verifica
+          </button>
+          <span id="esito"></span>
         </div>
       </div>
     </div>
     <script type="module">
-      import { stampaListaOTPSalvati } from "./js/generaCodice.js";
+      import { stampaListaOTPSalvati, getOTPById } from "./js/generaCodice.js";
 
       var interval;
       function OTPSelezionato(obj) {
@@ -115,7 +124,32 @@
         document.getElementById("otpcode").value = prettyTimeCode;
       }
 
+      function verificaCodice() {
+        const idOTP = document.getElementById("id").value;
+        if (!idOTP)
+          return alert("Seleziona un elemento dalla lista a sinistra");
+
+        const obj = getOTPById(idOTP);
+        if (obj.type !== "totp")
+          return alert("OTP counter non ancora implementato");
+
+        const codiceVero = new jsOTP.totp().getOtp(obj.secret);
+        const codcieUtenteEl = document.getElementById("verificaCodcie");
+        const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
+        codcieUtenteEl.value = "";
+
+        if (codcieUtente === codiceVero)
+          document.getElementById("esito").innerHTML = "Codice Corretto 😊🎉";
+        else
+          document.getElementById(
+            "esito"
+          ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
+      }
+
       stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
+      document
+        .getElementById("verificaCodiceFtn")
+        .addEventListener("click", verificaCodice);
     </script>
   </body>
 </html>

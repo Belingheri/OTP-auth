@@ -41,4 +41,8 @@ function rimuoviOTP({ currentTarget }) {
   stampaListaOTPSalvati();
 }
 
-export { stampaListaOTPSalvati };
+function getOTPById(id) {
+  return OPTService.get(id);
+}
+
+export { stampaListaOTPSalvati, getOTPById };
