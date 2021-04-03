@@ -34,6 +34,16 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati", callback) {
     spanDel.onclick = rimuoviOTP;
     li.appendChild(spanDel);
   });
+
+  ol.appendChild(document.createElement("hr"));
+  const btn = document.createElement("button");
+  btn.classList.add("btn", "btn-secondary");
+  ol.appendChild(btn);
+  const a = document.createElement("a");
+  a.href = "./configQr.html";
+  a.innerText = "Crea Nuovo";
+  a.style.color = "white";
+  btn.appendChild(a);
 }
 
 function rimuoviOTP({ currentTarget }) {
