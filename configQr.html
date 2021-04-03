@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>2FA QR code generator</title>
+    <title>2FA Generatore QR</title>
 
     <meta charset="utf-8" />
     <meta name="description" content="2FA QR code generator" />
@@ -50,7 +50,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <a class="nav-link" href="#"
-              >2FA QR code generator <span class="sr-only">(current)</span></a
+              >2FA Genera QR<span class="sr-only">(current)</span></a
             >
           </li>
           <li class="nav-item">
@@ -64,12 +64,17 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-3">
+          <h2>OTP Salvati</h2>
+          <small>
+            Gli OTP mostrati e savati sono solo quelli su questo PC ed in questo
+            browser🔏, non avviene nessun tipo di salvataggio online, il
+            programma tiene <b>tutti</b> i dati ed effettua i calcoli localmente
+            😎
+          </small>
           <ol id="listaSalvati" class="list-group"></ol>
         </div>
         <div class="col-lg-3">
-          <h2 itemprop="description">
-            Save your 2FA secrets, then use this to scan them again.
-          </h2>
+          <h2>Genera OTP</h2>
           <p>
             <select class="form-control" id="type">
               <option value="totp">Basato sul Tempo (TOTP)</option>
@@ -81,17 +86,18 @@
               class="form-control"
               type="search"
               id="secret"
-              placeholder="Secret &mdash; Required"
+              placeholder="Segreto"
               spellcheck="false"
             />
+            <button class="btn btn-secondary" id="generaSecret">Genera</button>
           </p>
-          <button class="btn btn-secondary" id="generaSecret">Genera</button>
+
           <p>
             <input
               class="form-control"
               type="search"
               id="label"
-              placeholder="Label &mdash; Required Ex. accountUser@email.it"
+              placeholder="Identificativo &mdash; accountUser@email.it"
               spellcheck="false"
             />
           </p>
@@ -100,8 +106,7 @@
               class="form-control"
               type="search"
               id="issuer"
-              placeholder="Issuer &mdash; Optional Ex. W-Gate"
-              list="issuers"
+              placeholder="Servizio &mdash; W-Gate"
               spellcheck="false"
             />
           </p>
@@ -157,10 +162,14 @@
          </p>
              </div-->
           <button id="salvaToken" type="button" class="btn btn-primary">
-            Salva
+            Salva 🔏
           </button>
         </div>
         <div class="col">
+          <h2>Scannerizza con la tua applicazine OTP preferita</h2>
+          <a href="https://duckduckgo.com/?q=opt+app&ia=web" target="_blank"
+            >🔎 Cerca app</a
+          >
           <p>
             <input
               class="form-control"
