@@ -4,7 +4,7 @@ import * as OPTService from "./service/OTPService.js";
  *
  * @param {string} nomeOlElement nome elemento ol dove disegnare la lista
  */
-function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
+function stampaListaOTPSalvati(nomeOlElement = "listaSalvati", callback) {
   const ol = document.getElementById(nomeOlElement);
   ol.innerHTML = "";
   OPTService.getAll().forEach((e) => {
@@ -17,7 +17,7 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
     spanTitle.setAttribute("role", "button");
     spanTitle.innerHTML = e.id;
     spanTitle.onclick = () => {
-      console.log("premuto...");
+      callback(e);
     };
 
     li.appendChild(spanTitle);
