@@ -25,6 +25,8 @@
       integrity="sha384-W+CodFEp2EiGOM49HsUJwCpf58Vkgsx5CtgCl6bQJiAfGb+ndvp/fE8dZtI9fnUD"
       crossorigin="anonymous"
     ></script>
+
+    <script src="./js/jsOTP.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -57,7 +59,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-4">
           <h2>OTP Salvati</h2>
           <small>
             Gli OTP mostrati e savati sono solo quelli su questo PC ed in questo
@@ -67,12 +69,50 @@
           </small>
           <ol id="listaSalvati" class="list-group"></ol>
         </div>
+        <div class="col-lg">
+          <input class="form-control" type="text" id="id" readonly />
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="countDown">CountDown s</span>
+            </div>
+            <input
+              id="otpcode"
+              type="text"
+              class="form-control"
+              aria-label="Default"
+              readonly
+            />
+          </div>
+        </div>
       </div>
     </div>
     <script type="module">
       import { stampaListaOTPSalvati } from "./js/generaCodice.js";
 
-      stampaListaOTPSalvati();
+      var interval;
+      function OTPSelezionato(obj) {
+        if (interval) clearInterval(interval);
+        if (obj.type !== "totp")
+          return alert("OTP counter non ancora implementato");
+        document.getElementById("id").value = obj.id;
+        riempiOTPForm(obj);
+        setInterval(() => {
+          riempiOTPForm(obj);
+        }, 500);
+      }
+      function riempiOTPForm(obj) {
+        const totp = new jsOTP.totp();
+        const timeCode = totp.getOtp(obj.secret);
+        const prettyTimeCode =
+          timeCode.substring(0, 3) + " " + timeCode.substring(3);
+        const epoch = Math.round(new Date().getTime() / 1000.0);
+        const countDown = 30 - (epoch % 30);
+        document.getElementById("countDown").innerHTML = `${countDown} sec`;
+        document.getElementById("otpcode").value = prettyTimeCode;
+      }
+
+      stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
     </script>
   </body>
 </html>
