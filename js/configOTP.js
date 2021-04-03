@@ -32,6 +32,22 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
     const spanTitle = document.createElement("u");
     spanTitle.setAttribute("role", "button");
     spanTitle.innerHTML = e.id;
+    spanTitle.onclick = () => {
+      const segreto = document.getElementById("secret");
+      document.getElementById("label").value = e.label;
+      segreto.value = e.secret;
+      document.getElementById("issuer").value = e.issuer;
+      document.getElementById("type").value = e.type;
+      if (e.counter) document.getElementById("counter").value = e.counter;
+      // non funziona l'invocazione all'onchange ....
+      //   if (typeof segreto.onchange == "function") {
+      //     segreto.onchange.apply(segreto);
+      //   }
+
+      // devo fare questa porcheria....
+      $("#secret").change();
+    };
+
     li.appendChild(spanTitle);
 
     const spanType = document.createElement("span");
