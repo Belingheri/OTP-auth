@@ -109,7 +109,7 @@
           return alert("OTP counter non ancora implementato");
         document.getElementById("id").value = obj.id;
         riempiOTPForm(obj);
-        setInterval(() => {
+        interval = setInterval(() => {
           riempiOTPForm(obj);
         }, 500);
       }
@@ -121,7 +121,10 @@
         const epoch = Math.round(new Date().getTime() / 1000.0);
         const countDown = 30 - (epoch % 30);
         document.getElementById("countDown").innerHTML = `${countDown} sec`;
-        document.getElementById("otpcode").value = prettyTimeCode;
+
+        const otpCodeEl = document.getElementById("otpcode");
+        if (otpCodeEl.value !== prettyTimeCode)
+          otpCodeEl.value = prettyTimeCode;
       }
 
       function verificaCodice() {
