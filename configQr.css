@@ -1,0 +1,51 @@
+body {
+  padding: 0 15px;
+  margin-bottom: 100px;
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 770px;
+  }
+}
+
+header {
+  margin-top: 25px;
+  text-align: center;
+}
+h1 {
+  font-size: 4em;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+h2 {
+  margin-top: 1em;
+  font-size: 1.5em;
+  font-weight: 400;
+}
+
+#uri {
+  color: gray;
+}
+#uri:focus {
+  color: inherit;
+}
+
+#qr {
+  padding: 25px;
+  text-align: center;
+}
+#app {
+  padding: 10px 20px;
+  background-color: white;
+  border-top: 15px solid #f2f2f2;
+  border-bottom: 15px solid #f2f2f2;
+  font-family: "Roboto", sans-serif;
+}
+#app_code {
+  color: #4285f4;
+  font-weight: 500;
+  font-size: xx-large;
+}
+#app_label {
+  color: #757575;
+}

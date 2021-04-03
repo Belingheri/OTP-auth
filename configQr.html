@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>2FA QR code generator</title>
+
+    <meta charset="utf-8" />
+    <meta name="description" content="2FA QR code generator" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link rel="icon" />
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/gh/lrsjng/jquery-qrcode@v0.18.0/dist/jquery-qrcode.min.js"
+      integrity="sha384-W+CodFEp2EiGOM49HsUJwCpf58Vkgsx5CtgCl6bQJiAfGb+ndvp/fE8dZtI9fnUD"
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="stylesheet" href="configQr.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">OTP</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarText"
+        aria-controls="navbarText"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >2FA QR code generator <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./genreraCodice.html">Controllo Codice</a>
+          </li>
+        </ul>
+        <span class="navbar-text"> Demo x funzionamento RBE </span>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm">
+          <h2 itemprop="description">
+            Save your 2FA secrets, then use this to scan them again.
+          </h2>
+          <p>
+            <select class="form-control" id="type">
+              <option value="totp">Basato sul Tempo (TOTP)</option>
+              <option value="hotp">Counter based (HOTP)</option>
+            </select>
+          </p>
+          <p>
+            <input
+              class="form-control"
+              type="search"
+              id="secret"
+              placeholder="Secret &mdash; Required"
+              spellcheck="false"
+            />
+          </p>
+          <button class="btn btn-secondary" id="generaSecret">Genera</button>
+          <p>
+            <input
+              class="form-control"
+              type="search"
+              id="label"
+              placeholder="Label &mdash; Required Ex. accountUser@email.it"
+              spellcheck="false"
+            />
+          </p>
+          <p>
+            <input
+              class="form-control"
+              type="search"
+              id="issuer"
+              placeholder="Issuer &mdash; Optional Ex. W-Gate"
+              list="issuers"
+              spellcheck="false"
+            />
+          </p>
+          <p>
+            <input
+              class="form-control"
+              type="search"
+              id="counter"
+              placeholder="Initial counter &mdash; Defaults to 0"
+              pattern="\d+"
+              spellcheck="false"
+            />
+          </p>
+          <!--div class="custom-control custom-checkbox">
+         <p>
+           <input
+             class="custom-control-input"
+             type="checkbox"
+             id="advanced_options"
+           /><label class="custom-control-label" for="advanced_options"
+             >Advanced options</label
+           >
+         </p>
+             </div>
+             <div id="advanced_options_container">
+         <p>
+           Please note that the advanced options are not supported by the Google
+           Authenticator app (all advanced options are ignored). Yubico
+           Authenticator supports these advanced options.
+         </p>
+         <p>
+           <select class="form-control" id="algorithm">
+             <option value="SHA1">SHA1 algorithm (Default)</option>
+             <option value="SHA256">SHA256 algorithm</option>
+             <option value="SHA512">SHA512 algorithm</option>
+           </select>
+         </p>
+         <p>
+           <select class="form-control" id="digits">
+             <option value="6">6 digits (Default)</option>
+             <option value="8">8 digits</option>
+           </select>
+         </p>
+         <p>
+           <input
+             class="form-control"
+             type="search"
+             id="period"
+             placeholder="Valid period, in seconds &mdash; Defaults to 30"
+             pattern="\d+"
+             spellcheck="false"
+           />
+         </p>
+             </div-->
+          <button id="salvaToken" type="button" class="btn btn-primary">
+            Salva
+          </button>
+        </div>
+        <div class="col">
+          <p>
+            <input
+              class="form-control"
+              type="text"
+              id="uri"
+              placeholder="otpauth://"
+              spellcheck="false"
+            />
+          </p>
+          <input
+            class="form-control-range"
+            type="range"
+            id="size"
+            value="200"
+            min="50"
+            max="650"
+            title="QR Code Size"
+          />
+          <div id="qr"></div>
+        </div>
+      </div>
+
+      <script type="module">
+        import * as OPTService from "./js/service/OTPService.js";
+
+        function salvaDatiQr() {
+          const obj = {};
+          obj.label = document.getElementById("label").value;
+          obj.secret = document.getElementById("secret").value;
+          obj.issuer = document.getElementById("issuer").value;
+          obj.type = document.getElementById("type").value;
+
+          try {
+            OPTService.save(obj);
+          } catch (error) {
+            alert(error);
+          }
+        }
+
+        document
+          .getElementById("salvaToken")
+          .addEventListener("click", salvaDatiQr);
+
+        document
+          .getElementById("generaSecret")
+          .addEventListener("click", (e) => {
+            const randomSecret = Math.random().toString(36).substring(2);
+            document.getElementById("secret").value = randomSecret;
+            update_qr();
+          });
+
+        // make a nice QR code as the favicon
+        $("#qr").empty().qrcode({
+          render: "image",
+          text: "stefansundin",
+        });
+        $("link[rel=icon]").prop("href", $("#qr img").prop("src"));
+
+        function advanced_options_changed() {
+          $("#advanced_options_container").toggle(
+            $("#advanced_options").prop("checked")
+          );
+          $("#period").toggle($("#type").val() == "totp");
+        }
+        $("#advanced_options").on("change keyup", advanced_options_changed);
+
+        function type_changed() {
+          const type = $("#type").val();
+          if (type == "totp") {
+            $("#counter").hide();
+          } else {
+            $("#counter").show();
+          }
+          advanced_options_changed();
+        }
+        type_changed();
+        $("#type").on("change keyup", type_changed);
+
+        function generate_uri() {
+          const type = $("#type").val();
+          const secret = $("#secret").val().replace(/ /g, "");
+          const label = $("#label").val();
+          const issuer = $("#issuer").val();
+          const advanced_options = $("#advanced_options").prop("checked");
+
+          let uri = `otpauth://${type}/${encodeURIComponent(
+            label
+          )}?secret=${secret}`;
+          if (issuer != "") {
+            uri += `&issuer=${encodeURIComponent(issuer)}`;
+          }
+          if (type == "hotp") {
+            const counter = $("#counter").val() || "0";
+            uri += `&counter=${counter}`;
+          }
+          if (advanced_options) {
+            const algorithm = $("#algorithm").val();
+            const digits = $("#digits").val();
+            uri += `&algorithm=${algorithm}&digits=${digits}`;
+            if (type == "totp") {
+              const period = $("#period").val() || "30";
+              uri += `&period=${period}`;
+            }
+          }
+          return uri;
+        }
+
+        function update_val(el, text) {
+          const start = el.selectionStart;
+          const end = el.selectionEnd;
+          el.value = text;
+          el.setSelectionRange(start, end);
+        }
+
+        function update_qr() {
+          const secret = $("#secret").val().replace(/ /g, "");
+          const issuer = $("#issuer").val();
+          const label = $("#label").val();
+          const size = $("#size").val();
+          const uri = generate_uri();
+          if (uri != $("#uri").val()) {
+            update_val($("#uri")[0], uri);
+          }
+
+          $("#qr").empty().qrcode({
+            text: uri,
+            size: size,
+          });
+          if (label == "" && issuer == "") {
+            $("#app_label").text("Issuer (label)");
+          } else {
+            $("#app_label").text(issuer == "" ? label : `${issuer} (${label})`);
+          }
+
+          // remove error on uri field
+          $("#uri").removeClass("is-invalid");
+          // mark empty required input fields
+          $("#secret").toggleClass("is-invalid", secret == "");
+          $("#label").toggleClass("is-invalid", label == "");
+        }
+
+        update_qr();
+        $(
+          "select,input[type='search'],input[type='checkbox'],input[type='range']"
+        ).on("change keyup input", update_qr);
+
+        function decode(s) {
+          return s ? decodeURIComponent(s) : undefined;
+        }
+
+        $("#uri").on("change keyup input", function () {
+          // validate and parse uri
+          const url = new URL(this.value);
+          if (
+            url.protocol == "otpauth:" &&
+            (url.pathname.startsWith("//totp/") ||
+              url.pathname.startsWith("//hotp/")) &&
+            url.searchParams.has("secret")
+          ) {
+            $("#uri").removeClass("is-invalid");
+          } else {
+            $("#uri").addClass("is-invalid");
+            return;
+          }
+
+          $("#advanced_options").prop(
+            "checked",
+            url.searchParams.has("algorithm") ||
+              url.searchParams.has("digits") ||
+              url.searchParams.has("period")
+          );
+          advanced_options_changed();
+
+          const uri = generate_uri();
+          if (uri == this.value) {
+            // uri did not change
+            return;
+          }
+
+          // update fields and generate a new QR code
+          $("#type").val(url.pathname.substr(2, 4));
+          $("#label").val(decode(url.pathname.substr(7)));
+          $("#secret").val(url.searchParams.get("secret"));
+          $("#issuer").val(decode(url.searchParams.get("issuer")));
+          const counter = url.searchParams.get("counter") || "";
+          $("#counter").val(counter == "0" ? "" : counter);
+          $("#algorithm").val(url.searchParams.get("algorithm") || "SHA1");
+          $("#digits").val(url.searchParams.get("digits") || "6");
+          $("#period").val(
+            url.searchParams.get("period") == "30"
+              ? ""
+              : url.searchParams.get("period")
+          );
+          type_changed();
+          update_qr();
+        });
+      </script>
+
+      <!--ul>
+        <li>
+          Get
+          <a href="https://github.com/stefansundin/2fa-qr">the source code</a>.
+        </li>
+      </ul-->
+    </div>
+  </body>
+</html>
