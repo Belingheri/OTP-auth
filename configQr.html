@@ -181,21 +181,7 @@
       </div>
 
       <script type="module">
-        import * as OPTService from "./js/service/OTPService.js";
-
-        function salvaDatiQr() {
-          const obj = {};
-          obj.label = document.getElementById("label").value;
-          obj.secret = document.getElementById("secret").value;
-          obj.issuer = document.getElementById("issuer").value;
-          obj.type = document.getElementById("type").value;
-
-          try {
-            OPTService.save(obj);
-          } catch (error) {
-            alert(error);
-          }
-        }
+        import { salvaDatiQr } from "./js/configOTP.js";
 
         document
           .getElementById("salvaToken")
