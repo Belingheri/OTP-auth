@@ -1,6 +1,6 @@
 import * as OPTService from "./service/OTPService.js";
 
-export function salvaDatiQr() {
+function salvaDatiQr() {
   const obj = {};
   obj.label = document.getElementById("label").value;
   obj.secret = document.getElementById("secret").value;
@@ -10,6 +10,8 @@ export function salvaDatiQr() {
   try {
     OPTService.save(obj);
   } catch (error) {
-    alert(error);
+    alert(error.message);
   }
 }
+
+export { salvaDatiQr };
