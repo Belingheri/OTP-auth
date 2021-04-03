@@ -52,6 +52,7 @@ function get(id) {
  * @param {string} id id dell oggtto che si vuole rimuovere dal local storage
  */
 function deleteOne(id) {
+  if (!confirm(`Cancellare ${id}?`)) return;
   localStorage.removeItem(decodeId(id));
 }
 
