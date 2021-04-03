@@ -25,7 +25,8 @@ function save(obj) {
 
   if (obj.type === "totp") delete obj.counter;
 
-  obj.id = `${obj.issuer}(${obj.label})`;
+  if (obj.issuer) obj.id = `${obj.issuer}(${obj.label})`;
+  else obj.id = obj.label;
   localStorage.setItem(decodeId(obj.id), JSON.stringify(obj));
 }
 
