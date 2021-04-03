@@ -63,6 +63,9 @@
 
     <div class="container-fluid">
       <div class="row">
+        <div class="col-2">
+          <ol id="listaSalvati" class="list-group"></ol>
+        </div>
         <div class="col-sm">
           <h2 itemprop="description">
             Save your 2FA secrets, then use this to scan them again.
@@ -157,9 +160,6 @@
             Salva
           </button>
         </div>
-        <div class="col.2">
-          <ol id="listaSalvati"></ol>
-        </div>
         <div class="col">
           <p>
             <input
@@ -184,7 +184,7 @@
       </div>
 
       <script type="module">
-        import { salvaDatiQr } from "./js/configOTP.js";
+        import { salvaDatiQr, stampaListaOTPSalvati } from "./js/configOTP.js";
 
         document
           .getElementById("salvaToken")
@@ -197,7 +197,7 @@
             document.getElementById("secret").value = randomSecret;
             update_qr();
           });
-
+        stampaListaOTPSalvati("listaSalvati");
         // make a nice QR code as the favicon
         $("#qr").empty().qrcode({
           render: "image",
