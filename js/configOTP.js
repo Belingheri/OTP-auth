@@ -13,7 +13,12 @@ function salvaDatiQr() {
     stampaListaOTPSalvati();
   } catch (error) {
     alert(error.message);
+    return;
   }
+
+  document.getElementById("label").value = "";
+  document.getElementById("secret").value = "";
+  document.getElementById("issuer").value = "";
 }
 
 /**
