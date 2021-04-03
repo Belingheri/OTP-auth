@@ -21,7 +21,7 @@ function save(obj) {
 
   if (!obj.type) throw new Error("Il tipo di OTP deve essere definito");
 
-  if (!obj.label) throw new Error("'issuer' deve essere definito");
+  if (!obj.label) throw new Error("'label' deve essere definito");
 
   obj.id = `${obj.issuer}(${obj.label})`;
   localStorage.setItem(decodeId(obj.id), JSON.stringify(obj));
