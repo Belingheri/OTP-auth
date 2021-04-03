@@ -45,5 +45,12 @@ function getAll() {
 function get(id) {
   return JSON.parse(localStorage.getItem(decodeId(id)));
 }
+/**
+ * Rimuove un OTP
+ * @param {string} id id dell oggtto che si vuole rimuovere dal local storage
+ */
+function deleteOne(id) {
+  localStorage.removeItem(decodeId(id));
+}
 
-export { get, getAll, save };
+export { get, getAll, save, deleteOne };
