@@ -1,5 +1,3 @@
-import * as OTPUtil from "../jsOTP.js";
-
 const prefisso = "OPT_";
 
 /**
