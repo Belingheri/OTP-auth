@@ -23,6 +23,8 @@ function save(obj) {
 
   if (!obj.label) throw new Error("'label' deve essere definito");
 
+  if (obj.type === "totp") delete obj.counter;
+
   obj.id = `${obj.issuer}(${obj.label})`;
   localStorage.setItem(decodeId(obj.id), JSON.stringify(obj));
 }
