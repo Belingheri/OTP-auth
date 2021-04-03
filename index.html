@@ -56,8 +56,38 @@
     </nav>
 
     <div class="container">
+      <h1>OTP Auth</h1>
+      <h2>Pagina di demo per l'autenticazione OTP</h2>
+      <p>
+        L'OTP &egrave; ...
+        <a
+          href="https://it.wikipedia.org/wiki/One-time_password"
+          target="_blank"
+          >wikipedia</a
+        >
+        lo spiega bene. <br />
+        La parte che piu interessa &egrave; per&ograve; che una volta generato
+        il qr e salvati dei parametri qualsiasi applicazione legacy o non, può
+        generare il codice, quindi Generiamo il codice e testiamo il
+        funzionamento
+      </p>
       <div class="row">
-        <div class="col-lg-4"></div>
+        <div class="col-lg m-10">
+          <button
+            class="btn btn-lg btn-info"
+            onclick="window.location='configQr.html'"
+          >
+            Genera Qr per configurazione
+          </button>
+        </div>
+        <div class="col-lg m-10">
+          <button
+            class="btn btn-lg btn-info"
+            onclick="window.location='generaCodice.html'"
+          >
+            Testa codice Generato
+          </button>
+        </div>
       </div>
     </div>
   </body>
