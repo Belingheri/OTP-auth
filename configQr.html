@@ -193,7 +193,11 @@
       </div>
 
       <script type="module">
-        import { salvaDatiQr, stampaListaOTPSalvati } from "./js/configOTP.js";
+        import {
+          salvaDatiQr,
+          stampaListaOTPSalvati,
+          randomString,
+        } from "./js/configOTP.js";
 
         document
           .getElementById("salvaToken")
@@ -202,7 +206,7 @@
         document
           .getElementById("generaSecret")
           .addEventListener("click", (e) => {
-            const randomSecret = Math.random().toString(36).substring(2);
+            const randomSecret = randomString(24);
             document.getElementById("secret").value = randomSecret;
             update_qr();
           });
