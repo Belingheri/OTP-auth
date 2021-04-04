@@ -238,7 +238,11 @@
 
         function generate_uri() {
           const type = $("#type").val();
-          const secret = $("#secret").val().replace(/ /g, "");
+          const secret = $("#secret")
+            .val()
+            .replace(/ /g, "")
+            .replace(/\d/g, "");
+          document.getElementById("secret").value = secret;
           const label = $("#label").val();
           const issuer = $("#issuer").val();
           const advanced_options = $("#advanced_options").prop("checked");
