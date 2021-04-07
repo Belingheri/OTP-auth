@@ -36,6 +36,7 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
 
     const spanTitle = document.createElement("u");
     spanTitle.setAttribute("role", "button");
+    spanTitle.classList.add("pointer");
     spanTitle.innerHTML = e.id;
     spanTitle.onclick = () => {
       const segreto = document.getElementById("secret");
@@ -44,9 +45,9 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
       document.getElementById("issuer").value = e.issuer;
       document.getElementById("type").value = e.type;
       const counterEl = document.getElementById("counter");
-      if (e.counter) {
+      if (typeof e.counter !== "undefined") {
         counterEl.value = e.counter;
-        counterEl.style.display = "";
+        counterEl.style.display = "initial";
       } else counterEl.style.display = "none";
       $("#secret").change();
     };
