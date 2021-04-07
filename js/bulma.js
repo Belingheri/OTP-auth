@@ -21,3 +21,8 @@ function enableHamburgerToogle() {
     });
   }
 }
+
+// enable toggle hamburger menu
+document.addEventListener("DOMContentLoaded", () => {
+  enableHamburgerToogle();
+});
