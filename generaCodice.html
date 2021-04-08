@@ -5,97 +5,124 @@
 
     <meta charset="utf-8" />
     <meta name="description" content="2FA QR code generator" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-      crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css"
     />
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/gh/lrsjng/jquery-qrcode@v0.18.0/dist/jquery-qrcode.min.js"
-      integrity="sha384-W+CodFEp2EiGOM49HsUJwCpf58Vkgsx5CtgCl6bQJiAfGb+ndvp/fE8dZtI9fnUD"
-      crossorigin="anonymous"
-    ></script>
+
+    <style>
+      html {
+        overflow-y: auto;
+      }
+      .pointer {
+        cursor: pointer;
+      }
+    </style>
+
+    <script src="./js/bulma.js"></script>
 
     <script src="./js/jsOTP.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="./index.html">OTP</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarText"
-        aria-controls="navbarText"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="./configQr.html">2FA Genera QR</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="#"
-              >Controllo Codice<span class="sr-only">(current)</span></a
-            >
-          </li>
-        </ul>
-        <span class="navbar-text">Beta</span>
+    <nav class="navbar is-black" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="#"> OTP-Auth </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="./configQr.html"> 2FA Genera QR </a>
+
+          <a class="navbar-item" href="./generaCodice.html">
+            Controllo Codice
+          </a>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <p class="control">
+                <a
+                  class="button is-link is-light"
+                  href="https://github.com/Belingheri/OTP-auth"
+                >
+                  <span class="icon">
+                    <img src="./img/githubLogo.png" alt="githubLogo" />
+                  </span>
+                  <span>GitHub</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-4">
-          <h2>OTP Salvati</h2>
+    <div class="container is-fluid">
+      <div class="columns">
+        <div class="column is-4">
+          <h2 class="subtitle is-2">OTP Salvati</h2>
           <small>
             Gli OTP mostrati e savati sono solo quelli su questo PC ed in questo
             browser🔏, non avviene nessun tipo di salvataggio online, il
             programma tiene <b>tutti</b> i dati ed effettua i calcoli localmente
             😎
           </small>
-          <ol id="listaSalvati" class="list-group"></ol>
+          <div id="listaSalvati"></div>
         </div>
-        <div class="col-lg">
-          <h2>Generazione Codice</h2>
-          <h3>Seleziona un elemento dalla lista</h3>
+        <div class="column">
+          <h2 class="title is-2">Generazione Codice</h2>
+          <h3 class="subtitle is-3">Seleziona un elemento dalla lista</h3>
           <small>La generazione del codice avvine localmente!</small>
-          <input class="form-control" type="text" id="id" readonly />
-
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="countDown">CountDown s</span>
-            </div>
-            <input
-              id="otpcode"
-              type="text"
-              class="form-control"
-              aria-label="Default"
-              readonly
-            />
+          <label id="id" class="label"></label>
+          <div class="field has-addons">
+            <p class="control">
+              <a class="button is-static" id="countDown"> CountDown s </a>
+            </p>
+            <p class="control">
+              <input
+                id="otpcode"
+                type="text"
+                class="input"
+                aria-label="Default"
+                readonly
+              />
+            </p>
           </div>
 
-          <h2>Verifica codice</h2>
-          <h3>Inserisci il codice generato dall'aplicazione</h3>
-          <small>si corrisposnde a quello generato sopra</small>
-          <input class="form-control" type="text" id="verificaCodcie" />
-          <button class="btn btn-primary" id="verificaCodiceFtn">
-            Verifica
-          </button>
-          <span id="esito"></span>
+          <h2 class="title is-2">Verifica codice</h2>
+          <h3 class="subtitle is-3">
+            Inserisci il codice generato dall'aplicazione
+          </h3>
+          <div class="field">
+            <label class="label is-small"
+              >Si, corrisposnde a quello generato sopra</label
+            >
+            <div class="field has-addons">
+              <p class="control">
+                <input class="input" type="text" id="verificaCodcie" />
+              </p>
+              <p class="control">
+                <button class="button is-primary" id="verificaCodiceFtn">
+                  Verifica
+                </button>
+              </p>
+            </div>
+            <span id="esito"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +134,7 @@
         if (interval) clearInterval(interval);
         if (obj.type !== "totp")
           return alert("OTP counter non ancora implementato");
-        document.getElementById("id").value = obj.id;
+        document.getElementById("id").innerHTML = obj.id;
         riempiOTPForm(obj);
         interval = setInterval(() => {
           riempiOTPForm(obj);
@@ -128,7 +155,7 @@
       }
 
       function verificaCodice() {
-        const idOTP = document.getElementById("id").value;
+        const idOTP = document.getElementById("id").innerHTML;
         if (!idOTP)
           return alert("Seleziona un elemento dalla lista a sinistra");
 
@@ -154,5 +181,17 @@
         .getElementById("verificaCodiceFtn")
         .addEventListener("click", verificaCodice);
     </script>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>OTP-Auth</strong> by
+          <a href="https://about.me/belingheri" target="_blank">Belingheri</a>.
+          The source code is on
+          <a href="https://github.com/Belingheri/OTP-auth" target="_blank"
+            >GitHub</a
+          >.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>
