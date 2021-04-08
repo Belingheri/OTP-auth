@@ -5,17 +5,20 @@
 
     <meta charset="utf-8" />
     <meta name="description" content="2FA QR code generator" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-      crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css"
     />
+
+    <style>
+      html {
+        overflow-y: auto;
+      }.pointer {
+        cursor: pointer;
+      }
+    </style>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -27,149 +30,141 @@
       crossorigin="anonymous"
     ></script>
 
+    <script src="./js/bulma.js"></script>
+
     <link rel="stylesheet" href="configQr.css" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="./index.html">OTP</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarText"
-        aria-controls="navbarText"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#"
-              >2FA Genera QR<span class="sr-only">(current)</span></a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./generaCodice.html">Controllo Codice</a>
-          </li>
-        </ul>
-        <span class="navbar-text">Beta</span>
+    <nav class="navbar is-black" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./"> OTP-Auth </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item is-active" href="./configQr.html">
+            2FA Genera QR
+          </a>
+
+          <a class="navbar-item" href="./generaCodice.html">
+            Controllo Codice
+          </a>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <p class="control">
+                <a
+                  class="button is-link is-light"
+                  href="https://github.com/Belingheri/OTP-auth"
+                  target="_blank"
+                >
+                  <span class="icon">
+                    <img src="./img/githubLogo.png" alt="githubLogo" />
+                  </span>
+                  <span>GitHub</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-3">
-          <h2>OTP Salvati</h2>
+    <div class="container is-fluid">
+      <div class="columns">
+        <div class="column is-3">
+          <h2 class="subtitle is-2">OTP Salvati</h2>
           <small>
             Gli OTP mostrati e savati sono solo quelli su questo PC ed in questo
             browser🔏, non avviene nessun tipo di salvataggio online, il
             programma tiene <b>tutti</b> i dati ed effettua i calcoli localmente
             😎
           </small>
-          <ol id="listaSalvati" class="list-group"></ol>
+          <div id="listaSalvati" ></div>
         </div>
-        <div class="col-lg-3">
-          <h2>Genera OTP</h2>
-          <p>
-            <select class="form-control" id="type">
+        <div class="column is-4">
+          <h2 class="subtitle is-2">Genera OTP</h2>
+          <div class="select">
+            <select id="type">
               <option value="totp">Basato sul Tempo (TOTP)</option>
               <option value="hotp">Counter based (HOTP)</option>
             </select>
-          </p>
-          <p>
-            <input
-              class="form-control"
-              type="search"
-              id="secret"
-              placeholder="Segreto"
-              spellcheck="false"
-            />
-            <button class="btn btn-secondary" id="generaSecret">Genera</button>
-          </p>
+          </div>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input
+                class="input"
+                type="text"
+                id="secret"
+                placeholder="Segreto"
+                spellcheck="false"
+              />
+            </div>
+            <div class="control">
+              <button class="button is-info" id="generaSecret">Genera</button>
+            </div>
+          </div>
 
-          <p>
+          <div class="control">
             <input
-              class="form-control"
-              type="search"
+              class="input"
+              type="text"
               id="label"
               placeholder="Identificativo &mdash; accountUser@email.it"
               spellcheck="false"
             />
-          </p>
-          <p>
+          </div>
+
+          <div class="control">
             <input
-              class="form-control"
+              class="input"
               type="search"
               id="issuer"
               placeholder="Servizio &mdash; W-Gate"
               spellcheck="false"
             />
-          </p>
-          <p>
+          </div>
+
+          <div class="control">
             <input
-              class="form-control"
-              type="search"
+              class="input"
+              type="number"
               id="counter"
               placeholder="Initial counter &mdash; Defaults to 0"
               pattern="\d+"
               spellcheck="false"
             />
-          </p>
-          <!--div class="custom-control custom-checkbox">
-         <p>
-           <input
-             class="custom-control-input"
-             type="checkbox"
-             id="advanced_options"
-           /><label class="custom-control-label" for="advanced_options"
-             >Advanced options</label
-           >
-         </p>
-             </div>
-             <div id="advanced_options_container">
-         <p>
-           Please note that the advanced options are not supported by the Google
-           Authenticator app (all advanced options are ignored). Yubico
-           Authenticator supports these advanced options.
-         </p>
-         <p>
-           <select class="form-control" id="algorithm">
-             <option value="SHA1">SHA1 algorithm (Default)</option>
-             <option value="SHA256">SHA256 algorithm</option>
-             <option value="SHA512">SHA512 algorithm</option>
-           </select>
-         </p>
-         <p>
-           <select class="form-control" id="digits">
-             <option value="6">6 digits (Default)</option>
-             <option value="8">8 digits</option>
-           </select>
-         </p>
-         <p>
-           <input
-             class="form-control"
-             type="search"
-             id="period"
-             placeholder="Valid period, in seconds &mdash; Defaults to 30"
-             pattern="\d+"
-             spellcheck="false"
-           />
-         </p>
-             </div-->
-          <button id="salvaToken" type="button" class="btn btn-primary">
-            Salva 🔏
-          </button>
+          </div>
+          <div class="control">
+            <button id="salvaToken" type="button" class="button is-primary">
+              Salva 🔏
+            </button>
+          </div>
         </div>
-        <div class="col">
-          <h2>Scannerizza con la tua applicazine OTP preferita</h2>
+
+        <div class="column">
+          <h2 class="subtitle is-3">
+            Scannerizza con la tua applicazine OTP preferita
+          </h2>
           <a href="https://duckduckgo.com/?q=opt+app&ia=web" target="_blank"
             >🔎 Cerca app</a
           >
-          <p>
+          <div class="control">
             <input
-              class="form-control"
+              class="input is-small"
               type="text"
               id="uri"
               placeholder="otpauth://"
@@ -178,8 +173,8 @@
             />
           </p>
           <input
-            class="form-control-range"
-            type="range"
+            class="input"
+            type="hidden"
             id="size"
             value="200"
             min="50"
@@ -195,6 +190,7 @@
           salvaDatiQr,
           stampaListaOTPSalvati,
           randomString,
+          generate_uri
         } from "./js/configOTP.js";
 
         document
@@ -236,38 +232,7 @@
         type_changed();
         $("#type").on("change keyup", type_changed);
 
-        function generate_uri() {
-          const type = $("#type").val();
-          const secret = $("#secret")
-            .val()
-            .replace(/ /g, "")
-            .replace(/\d/g, "");
-          document.getElementById("secret").value = secret;
-          const label = $("#label").val();
-          const issuer = $("#issuer").val();
-          const advanced_options = $("#advanced_options").prop("checked");
-
-          let uri = `otpauth://${type}/${encodeURIComponent(
-            label
-          )}?secret=${secret}`;
-          if (issuer != "") {
-            uri += `&issuer=${encodeURIComponent(issuer)}`;
-          }
-          if (type == "hotp") {
-            const counter = $("#counter").val() || "0";
-            uri += `&counter=${counter}`;
-          }
-          if (advanced_options) {
-            const algorithm = $("#algorithm").val();
-            const digits = $("#digits").val();
-            uri += `&algorithm=${algorithm}&digits=${digits}`;
-            if (type == "totp") {
-              const period = $("#period").val() || "30";
-              uri += `&period=${period}`;
-            }
-          }
-          return uri;
-        }
+        
 
         function update_val(el, text) {
           const start = el.selectionStart;
@@ -297,15 +262,15 @@
           }
 
           // remove error on uri field
-          $("#uri").removeClass("is-invalid");
+          $("#uri").removeClass("is-danger");
           // mark empty required input fields
-          $("#secret").toggleClass("is-invalid", secret == "");
-          $("#label").toggleClass("is-invalid", label == "");
+          $("#secret").toggleClass("is-danger", secret == "");
+          $("#label").toggleClass("is-danger", label == "");
         }
 
         update_qr();
         $(
-          "select,input[type='search'],input[type='checkbox'],input[type='range']"
+          "select,input[type='text'],input[type='checkbox'],input[type='range'],input[type='number']"
         ).on("change keyup input", update_qr);
 
         function decode(s) {
@@ -321,9 +286,9 @@
               url.pathname.startsWith("//hotp/")) &&
             url.searchParams.has("secret")
           ) {
-            $("#uri").removeClass("is-invalid");
+            $("#uri").removeClass("is-danger");
           } else {
-            $("#uri").addClass("is-invalid");
+            $("#uri").addClass("is-danger");
             return;
           }
 
@@ -359,13 +324,19 @@
           update_qr();
         });
       </script>
-
-      <!--ul>
-        <li>
-          Get
-          <a href="https://github.com/stefansundin/2fa-qr">the source code</a>.
-        </li>
-      </ul-->
+      
     </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>OTP-Auth</strong> by
+          <a href="https://about.me/belingheri" target="_blank">Belingheri</a>.
+          The source code is on
+          <a href="https://github.com/Belingheri/OTP-auth" target="_blank"
+            >GitHub</a
+          >.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

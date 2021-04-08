@@ -29,13 +29,14 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
   const ol = document.getElementById(nomeOlElement);
   ol.innerHTML = "";
   OPTService.getAll().forEach((e) => {
-    const li = document.createElement("li");
-    li.classList.add("list-group-item");
+    const li = document.createElement("div");
+    li.classList.add("box");
     li.id = e.id;
     ol.appendChild(li);
 
     const spanTitle = document.createElement("u");
     spanTitle.setAttribute("role", "button");
+    spanTitle.classList.add("pointer");
     spanTitle.innerHTML = e.id;
     spanTitle.onclick = () => {
       const segreto = document.getElementById("secret");
@@ -43,13 +44,11 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
       segreto.value = e.secret;
       document.getElementById("issuer").value = e.issuer;
       document.getElementById("type").value = e.type;
-      if (e.counter) document.getElementById("counter").value = e.counter;
-      // non funziona l'invocazione all'onchange ....
-      //   if (typeof segreto.onchange == "function") {
-      //     segreto.onchange.apply(segreto);
-      //   }
-
-      // devo fare questa porcheria....
+      const counterEl = document.getElementById("counter");
+      if (typeof e.counter !== "undefined") {
+        counterEl.value = e.counter;
+        counterEl.style.display = "initial";
+      } else counterEl.style.display = "none";
       $("#secret").change();
     };
 
@@ -57,12 +56,12 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati") {
 
     const spanType = document.createElement("span");
     spanType.innerHTML = e.type.toUpperCase();
-    spanType.classList.add("badge", "badge-info", "m-1");
+    spanType.classList.add("tag", "is-info", "mx-1");
     li.appendChild(spanType);
 
     const spanDel = document.createElement("span");
-    spanDel.innerHTML = "X";
-    spanDel.classList.add("badge", "badge-danger", "float-right", "my-1");
+    spanDel.classList.add("tag", "is-danger", "delete");
+    spanDel.style.float = "right";
     spanDel.setAttribute("role", "button");
     spanDel.onclick = rimuoviOTP;
     li.appendChild(spanDel);
@@ -84,4 +83,36 @@ function randomString(length) {
   return result;
 }
 
-export { salvaDatiQr, stampaListaOTPSalvati, randomString };
+function generate_uri() {
+  const type = document.getElementById("type").value;
+  const secret = document
+    .getElementById("secret")
+    .value.replace(/ /g, "")
+    .replace(/\d/g, "");
+  document.getElementById("secret").value = secret;
+  const label = document.getElementById("label").value;
+  const issuer = document.getElementById("issuer").value;
+  const advanced_options =
+    document.getElementById("advanced_options") &&
+    document.getElementById("advanced_options").checked;
+  let uri = `otpauth://${type}/${encodeURIComponent(label)}?secret=${secret}`;
+  if (issuer != "") {
+    uri += `&issuer=${encodeURIComponent(issuer)}`;
+  }
+  if (type === "hotp") {
+    const counter = document.getElementById("counter").value || "0";
+    uri += `&counter=${counter}`;
+  }
+  if (advanced_options) {
+    const algorithm = document.getElementById("algorithm").value;
+    const digits = document.getElementById("digits").value;
+    uri += `&algorithm=${algorithm}&digits=${digits}`;
+    if (type == "totp") {
+      const period = document.getElementById("period").value || "30";
+      uri += `&period=${period}`;
+    }
+  }
+  return uri;
+}
+
+export { salvaDatiQr, stampaListaOTPSalvati, randomString, generate_uri };

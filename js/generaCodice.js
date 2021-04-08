@@ -8,13 +8,14 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati", callback) {
   const ol = document.getElementById(nomeOlElement);
   ol.innerHTML = "";
   OPTService.getAll().forEach((e) => {
-    const li = document.createElement("li");
-    li.classList.add("list-group-item");
+    const li = document.createElement("div");
+    li.classList.add("box");
     li.id = e.id;
     ol.appendChild(li);
 
     const spanTitle = document.createElement("u");
     spanTitle.setAttribute("role", "button");
+    spanTitle.classList.add("pointer");
     spanTitle.innerHTML = e.id;
     spanTitle.onclick = () => {
       callback(e);
@@ -24,20 +25,20 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati", callback) {
 
     const spanType = document.createElement("span");
     spanType.innerHTML = e.type.toUpperCase();
-    spanType.classList.add("badge", "badge-info", "m-1");
+    spanType.classList.add("tag", "is-info", "mx-1");
     li.appendChild(spanType);
 
     const spanDel = document.createElement("span");
-    spanDel.innerHTML = "X";
-    spanDel.classList.add("badge", "badge-danger", "float-right", "my-1");
+    spanDel.classList.add("tag", "is-danger", "delete");
+    spanDel.style.float = "right";
     spanDel.setAttribute("role", "button");
-    spanDel.onclick = rimuoviOTP;
+    spanDel.onclick = (e) => rimuoviOTP(e, nomeOlElement, callback);
     li.appendChild(spanDel);
   });
 
   ol.appendChild(document.createElement("hr"));
   const btn = document.createElement("button");
-  btn.classList.add("btn", "btn-secondary");
+  btn.classList.add("button", "is-link");
   ol.appendChild(btn);
   const a = document.createElement("a");
   a.href = "./configQr.html";
@@ -46,9 +47,9 @@ function stampaListaOTPSalvati(nomeOlElement = "listaSalvati", callback) {
   btn.appendChild(a);
 }
 
-function rimuoviOTP({ currentTarget }) {
+function rimuoviOTP({ currentTarget }, nomeOlElement, callback) {
   OPTService.deleteOne(currentTarget.parentNode.id);
-  stampaListaOTPSalvati();
+  stampaListaOTPSalvati(nomeOlElement, callback);
 }
 
 function getOTPById(id) {
