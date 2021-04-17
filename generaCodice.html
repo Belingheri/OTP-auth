@@ -142,58 +142,13 @@
       </div>
     </div>
     <script type="module">
-      import { stampaListaOTPSalvati, getOTPById } from "./js/generaCodice.js";
+      import {
+        stampaListaOTPSalvati,
+        getOTPById,
+        OTPSelezionato,
+        verificaCodice,
+      } from "./js/generaCodice.js";
 
-      var interval;
-      function OTPSelezionato(obj) {
-        if (interval) clearInterval(interval);
-        document.getElementById("id").innerHTML = obj.id;
-        if (obj.type === "totp") {
-          document.getElementById("count-container").style.display = "none";
-          riempiOTPForm(obj);
-          interval = setInterval(() => {
-            riempiOTPForm(obj);
-          }, 500);
-        } else {
-          document.getElementById("time-container").style.display = "none";
-        }
-      }
-      function riempiOTPForm(obj) {
-        document.getElementById("time-container").style.display = "flex";
-        const totp = new jsOTP.totp();
-        const timeCode = totp.getOtp(obj.secret);
-        const prettyTimeCode =
-          timeCode.substring(0, 3) + " " + timeCode.substring(3);
-        const epoch = Math.round(new Date().getTime() / 1000.0);
-        const countDown = 30 - (epoch % 30);
-        document.getElementById("countDown").innerHTML = `${countDown} sec`;
-
-        const otpCodeEl = document.getElementById("otpcode");
-        if (otpCodeEl.value !== prettyTimeCode)
-          otpCodeEl.value = prettyTimeCode;
-      }
-
-      function verificaCodice() {
-        const idOTP = document.getElementById("id").innerHTML;
-        if (!idOTP)
-          return alert("Seleziona un elemento dalla lista a sinistra");
-
-        const obj = getOTPById(idOTP);
-        if (obj.type !== "totp")
-          return alert("OTP counter non ancora implementato");
-
-        const codiceVero = new jsOTP.totp().getOtp(obj.secret);
-        const codcieUtenteEl = document.getElementById("verificaCodcie");
-        const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
-        codcieUtenteEl.value = "";
-
-        if (codcieUtente === codiceVero)
-          document.getElementById("esito").innerHTML = "Codice Corretto 😊🎉";
-        else
-          document.getElementById(
-            "esito"
-          ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
-      }
       stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
       document
         .getElementById("verificaCodiceFtn")
