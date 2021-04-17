@@ -89,13 +89,27 @@
           <h3 class="subtitle is-3">Seleziona un elemento dalla lista</h3>
           <small>La generazione del codice avvine localmente!</small>
           <label id="id" class="label"></label>
-          <div class="field has-addons">
+          <div class="field has-addons" id="time-container">
             <p class="control">
               <a class="button is-static" id="countDown"> CountDown s </a>
             </p>
             <p class="control">
               <input
                 id="otpcode"
+                type="text"
+                class="input"
+                aria-label="Default"
+                readonly
+              />
+            </p>
+          </div>
+          <div class="field has-addons" id="count-container">
+            <p class="control">
+              <a class="button is-static" id="countNum"> CountNum </a>
+            </p>
+            <p class="control">
+              <input
+                id="otpcode-count"
                 type="text"
                 class="input"
                 aria-label="Default"
@@ -133,15 +147,19 @@
       var interval;
       function OTPSelezionato(obj) {
         if (interval) clearInterval(interval);
-        if (obj.type !== "totp")
-          return alert("OTP counter non ancora implementato");
         document.getElementById("id").innerHTML = obj.id;
-        riempiOTPForm(obj);
-        interval = setInterval(() => {
+        if (obj.type === "totp") {
+          document.getElementById("count-container").style.display = "none";
           riempiOTPForm(obj);
-        }, 500);
+          interval = setInterval(() => {
+            riempiOTPForm(obj);
+          }, 500);
+        } else {
+          document.getElementById("time-container").style.display = "none";
+        }
       }
       function riempiOTPForm(obj) {
+        document.getElementById("time-container").style.display = "flex";
         const totp = new jsOTP.totp();
         const timeCode = totp.getOtp(obj.secret);
         const prettyTimeCode =
@@ -176,7 +194,6 @@
             "esito"
           ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
       }
-
       stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
       document
         .getElementById("verificaCodiceFtn")
