@@ -1,6 +1,6 @@
 import * as OPTService from "./service/OTPService.js";
 
-let interval;
+let timeout;
 
 /**
  *
@@ -58,19 +58,18 @@ function getOTPById(id) {
   return OPTService.get(id);
 }
 function OTPSelezionato(obj) {
-  if (interval) clearInterval(interval);
+  if (timeout) clearTimeout(timeout);
   document.getElementById("id").innerHTML = obj.id;
-  if (obj.type === "totp") {
-    document.getElementById("count-container").style.display = "none";
-    riempiOTPForm(obj);
-    interval = setInterval(() => {
-      riempiOTPForm(obj);
-    }, 500);
-  } else {
-    document.getElementById("time-container").style.display = "none";
-  }
+
+  riempiOTPForm(obj);
 }
 function riempiOTPForm(obj) {
+  if (obj.type === "totp") riempiTimeOTPForm(obj);
+  else riempiCounterOTPForm(obj);
+}
+
+function riempiTimeOTPForm(obj) {
+  document.getElementById("count-container").style.display = "none";
   document.getElementById("time-container").style.display = "flex";
   const totp = new jsOTP.totp();
   const timeCode = totp.getOtp(obj.secret);
@@ -81,6 +80,22 @@ function riempiOTPForm(obj) {
 
   const otpCodeEl = document.getElementById("otpcode");
   if (otpCodeEl.value !== prettyTimeCode) otpCodeEl.value = prettyTimeCode;
+  timeout = setTimeout(() => {
+    riempiOTPForm(obj);
+  }, 500);
+}
+
+function riempiCounterOTPForm(obj) {
+  document.getElementById("time-container").style.display = "none";
+  document.getElementById("count-container").style.display = "flex";
+  const hotp = new jsOTP.hotp();
+  const timeCode = hotp.getOtp(obj.secret, obj.counter);
+  const prettyCountCode =
+    timeCode.substring(0, 3) + " " + timeCode.substring(3);
+  document.getElementById("countNum").innerHTML = obj.counter;
+
+  const otpCodeEl = document.getElementById("otpcode-count");
+  if (otpCodeEl.value !== prettyCountCode) otpCodeEl.value = prettyCountCode;
 }
 
 function verificaCodice() {
