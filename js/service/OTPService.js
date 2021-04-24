@@ -46,7 +46,9 @@ function getAll() {
  * @returns {object} oggetto salvato nel localStorage
  */
 function get(id) {
-  return JSON.parse(localStorage.getItem(decodeId(id)));
+  const obj = JSON.parse(localStorage.getItem(decodeId(id)));
+  if (obj.hasOwnProperty("counter")) obj.counter = parseInt(obj.counter);
+  return obj;
 }
 /**
  * Rimuove un OTP
