@@ -118,10 +118,8 @@ function verificaCodice() {
   const idOTP = document.getElementById("id").innerHTML;
   if (!idOTP) return alert("Seleziona un elemento dalla lista a sinistra");
 
-  const obj = getOTPById(idOTP);
-  if (obj.type !== "totp") return alert("OTP counter non ancora implementato");
-
-  const codiceVero = OPTService.getAuthCode(obj.secret);
+  const obj = getActualOTP();
+  const codiceVero = OPTService.getAuthCode(obj);
   const codcieUtenteEl = document.getElementById("verificaCodcie");
   const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
   codcieUtenteEl.value = "";
