@@ -89,7 +89,7 @@
           <h3 class="subtitle is-3">Seleziona un elemento dalla lista</h3>
           <small>La generazione del codice avvine localmente!</small>
           <label id="id" class="label"></label>
-          <div class="field has-addons">
+          <div class="field has-addons" id="time-container">
             <p class="control">
               <a class="button is-static" id="countDown"> CountDown s </a>
             </p>
@@ -102,6 +102,24 @@
                 readonly
               />
             </p>
+          </div>
+          <div class="field has-addons" id="count-container">
+            <p class="control">
+              <a class="button is-static" id="countNum"> CountNum </a>
+            </p>
+            <p class="control">
+              <input
+                id="otpcode-count"
+                type="text"
+                class="input"
+                aria-label="Default"
+                readonly
+              />
+            </p>
+            <div class="buttons has-addons">
+              <span id="minus" class="button plus-minus" disabled>-</span>
+              <span id="plus" class="button plus-minus" disabled>+</span>
+            </div>
           </div>
 
           <h2 class="title is-2">Verifica codice</h2>
@@ -128,59 +146,22 @@
       </div>
     </div>
     <script type="module">
-      import { stampaListaOTPSalvati, getOTPById } from "./js/generaCodice.js";
-
-      var interval;
-      function OTPSelezionato(obj) {
-        if (interval) clearInterval(interval);
-        if (obj.type !== "totp")
-          return alert("OTP counter non ancora implementato");
-        document.getElementById("id").innerHTML = obj.id;
-        riempiOTPForm(obj);
-        interval = setInterval(() => {
-          riempiOTPForm(obj);
-        }, 500);
-      }
-      function riempiOTPForm(obj) {
-        const totp = new jsOTP.totp();
-        const timeCode = totp.getOtp(obj.secret);
-        const prettyTimeCode =
-          timeCode.substring(0, 3) + " " + timeCode.substring(3);
-        const epoch = Math.round(new Date().getTime() / 1000.0);
-        const countDown = 30 - (epoch % 30);
-        document.getElementById("countDown").innerHTML = `${countDown} sec`;
-
-        const otpCodeEl = document.getElementById("otpcode");
-        if (otpCodeEl.value !== prettyTimeCode)
-          otpCodeEl.value = prettyTimeCode;
-      }
-
-      function verificaCodice() {
-        const idOTP = document.getElementById("id").innerHTML;
-        if (!idOTP)
-          return alert("Seleziona un elemento dalla lista a sinistra");
-
-        const obj = getOTPById(idOTP);
-        if (obj.type !== "totp")
-          return alert("OTP counter non ancora implementato");
-
-        const codiceVero = new jsOTP.totp().getOtp(obj.secret);
-        const codcieUtenteEl = document.getElementById("verificaCodcie");
-        const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
-        codcieUtenteEl.value = "";
-
-        if (codcieUtente === codiceVero)
-          document.getElementById("esito").innerHTML = "Codice Corretto 😊🎉";
-        else
-          document.getElementById(
-            "esito"
-          ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
-      }
+      import {
+        stampaListaOTPSalvati,
+        getOTPById,
+        OTPSelezionato,
+        verificaCodice,
+        handlePlusMinus,
+      } from "./js/generaCodice.js";
 
       stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
       document
         .getElementById("verificaCodiceFtn")
         .addEventListener("click", verificaCodice);
+
+      document.querySelectorAll(".plus-minus").forEach((element) => {
+        element.addEventListener("click", handlePlusMinus);
+      });
     </script>
     <footer class="footer">
       <div class="content has-text-centered">

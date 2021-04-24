@@ -1,5 +1,7 @@
 import * as OPTService from "./service/OTPService.js";
 
+let timeout;
+
 /**
  *
  * @param {string} nomeOlElement nome elemento ol dove disegnare la lista
@@ -56,4 +58,114 @@ function getOTPById(id) {
   return OPTService.get(id);
 }
 
-export { stampaListaOTPSalvati, getOTPById };
+/**
+ * @return attuale OTP obj con i dati aggiornati
+ */
+function getActualOTP() {
+  return getOTPById(document.getElementById("id").innerHTML);
+}
+
+/**
+ * Formatta il valore del codice da visualizzare
+ * @param {string} value
+ * @returns {string} valore formattoato
+ */
+function formatValue(value) {
+  return value.substring(0, 3) + " " + value.substring(3);
+}
+
+function OTPSelezionato(obj) {
+  if (timeout) clearTimeout(timeout);
+  document.getElementById("id").innerHTML = obj.id;
+
+  riempiOTPForm(obj);
+}
+
+function riempiOTPForm(obj) {
+  // aggiorno i dati
+  const objAgg = OPTService.get(obj.id);
+  if (objAgg.type === "totp") riempiTimeOTPForm(objAgg);
+  else riempiCounterOTPForm(objAgg);
+  gestPlusMinusEnable();
+}
+
+function riempiTimeOTPForm(obj) {
+  document.getElementById("count-container").style.display = "none";
+  document.getElementById("time-container").style.display = "flex";
+  const prettyTimeCode = formatValue(OPTService.getAuthCode(obj));
+  const epoch = Math.round(new Date().getTime() / 1000.0);
+  const countDown = 30 - (epoch % 30);
+  document.getElementById("countDown").innerHTML = `${countDown} sec`;
+
+  const otpCodeEl = document.getElementById("otpcode");
+  if (otpCodeEl.value !== prettyTimeCode) otpCodeEl.value = prettyTimeCode;
+  timeout = setTimeout(() => {
+    riempiOTPForm(obj);
+  }, 500);
+}
+
+function riempiCounterOTPForm(obj) {
+  document.getElementById("time-container").style.display = "none";
+  document.getElementById("count-container").style.display = "flex";
+  const prettyCountCode = formatValue(OPTService.getAuthCode(obj));
+  document.getElementById("countNum").innerHTML = obj.counter;
+
+  const otpCodeEl = document.getElementById("otpcode-count");
+  if (otpCodeEl.value !== prettyCountCode) otpCodeEl.value = prettyCountCode;
+}
+
+function verificaCodice() {
+  const idOTP = document.getElementById("id").innerHTML;
+  if (!idOTP) return alert("Seleziona un elemento dalla lista a sinistra");
+
+  const obj = getActualOTP();
+  const codiceVero = OPTService.getAuthCode(obj);
+  const codcieUtenteEl = document.getElementById("verificaCodcie");
+  const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
+  codcieUtenteEl.value = "";
+
+  if (codcieUtente === codiceVero)
+    document.getElementById("esito").innerHTML = "Codice Corretto 😊🎉";
+  else
+    document.getElementById(
+      "esito"
+    ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
+}
+
+function handlePlusMinus({ currentTarget: t }) {
+  if (t.getAttribute("disabled") !== null) return;
+  const counterEl = document.getElementById("counter");
+
+  const authObj = getActualOTP();
+  if (t.id === "plus") authObj.counter++;
+  else authObj.counter--;
+  OPTService.save(authObj);
+  riempiCounterOTPForm(authObj);
+
+  gestPlusMinusEnable();
+}
+
+/**
+ * disabilita i bottoni di piu' o meno legati al counter auth
+ */
+function gestPlusMinusEnable() {
+  const plusBtn = document.getElementById("plus");
+  const minusBtn = document.getElementById("minus");
+  const authObj = getActualOTP();
+  if (authObj.type === "totp") {
+    minusBtn.setAttribute("disabled", true);
+    plusBtn.setAttribute("disabled", true);
+  } else {
+    plusBtn.removeAttribute("disabled");
+    if (authObj.counter === 0) minusBtn.setAttribute("disabled", true);
+    else minusBtn.removeAttribute("disabled");
+  }
+}
+
+export {
+  stampaListaOTPSalvati,
+  getOTPById,
+  OTPSelezionato,
+  verificaCodice,
+  handlePlusMinus,
+};

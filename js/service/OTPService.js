@@ -46,7 +46,9 @@ function getAll() {
  * @returns {object} oggetto salvato nel localStorage
  */
 function get(id) {
-  return JSON.parse(localStorage.getItem(decodeId(id)));
+  const obj = JSON.parse(localStorage.getItem(decodeId(id)));
+  if (obj.hasOwnProperty("counter")) obj.counter = parseInt(obj.counter);
+  return obj;
 }
 /**
  * Rimuove un OTP
@@ -57,4 +59,16 @@ function deleteOne(id) {
   localStorage.removeItem(decodeId(id));
 }
 
-export { get, getAll, save, deleteOne };
+/**
+ * Calcola il codice a 2 fattori
+ * @param {object} obj oggetto sulla quale calcolare il codice
+ * @return {number} codice
+ */
+function getAuthCode(obj) {
+  if (obj.type === "hotp") {
+    return new jsOTP.hotp().getOtp(obj.secret, obj.counter);
+  } else {
+    return new jsOTP.totp().getOtp(obj.secret);
+  }
+}
+export { get, getAll, save, deleteOne, getAuthCode };
