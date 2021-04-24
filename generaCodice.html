@@ -116,6 +116,10 @@
                 readonly
               />
             </p>
+            <div class="buttons has-addons">
+              <span id="minus" class="button plus-minus" disabled>-</span>
+              <span id="plus" class="button plus-minus" disabled>+</span>
+            </div>
           </div>
 
           <h2 class="title is-2">Verifica codice</h2>
@@ -147,12 +151,17 @@
         getOTPById,
         OTPSelezionato,
         verificaCodice,
+        handlePlusMinus,
       } from "./js/generaCodice.js";
 
       stampaListaOTPSalvati("listaSalvati", OTPSelezionato);
       document
         .getElementById("verificaCodiceFtn")
         .addEventListener("click", verificaCodice);
+
+      document.querySelectorAll(".plus-minus").forEach((element) => {
+        element.addEventListener("click", handlePlusMinus);
+      });
     </script>
     <footer class="footer">
       <div class="content has-text-centered">

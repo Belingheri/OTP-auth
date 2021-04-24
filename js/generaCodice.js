@@ -57,23 +57,42 @@ function rimuoviOTP({ currentTarget }, nomeOlElement, callback) {
 function getOTPById(id) {
   return OPTService.get(id);
 }
+
+/**
+ * @return attuale OTP obj con i dati aggiornati
+ */
+function getActualOTP() {
+  return getOTPById(document.getElementById("id").innerHTML);
+}
+
+/**
+ * Formatta il valore del codice da visualizzare
+ * @param {string} value
+ * @returns {string} valore formattoato
+ */
+function formatValue(value) {
+  return value.substring(0, 3) + " " + value.substring(3);
+}
+
 function OTPSelezionato(obj) {
   if (timeout) clearTimeout(timeout);
   document.getElementById("id").innerHTML = obj.id;
 
   riempiOTPForm(obj);
 }
+
 function riempiOTPForm(obj) {
-  if (obj.type === "totp") riempiTimeOTPForm(obj);
-  else riempiCounterOTPForm(obj);
+  // aggiorno i dati
+  const objAgg = OPTService.get(obj.id);
+  if (objAgg.type === "totp") riempiTimeOTPForm(objAgg);
+  else riempiCounterOTPForm(objAgg);
+  gestPlusMinusEnable();
 }
 
 function riempiTimeOTPForm(obj) {
   document.getElementById("count-container").style.display = "none";
   document.getElementById("time-container").style.display = "flex";
-  const totp = new jsOTP.totp();
-  const timeCode = totp.getOtp(obj.secret);
-  const prettyTimeCode = timeCode.substring(0, 3) + " " + timeCode.substring(3);
+  const prettyTimeCode = formatValue(OPTService.getAuthCode(obj));
   const epoch = Math.round(new Date().getTime() / 1000.0);
   const countDown = 30 - (epoch % 30);
   document.getElementById("countDown").innerHTML = `${countDown} sec`;
@@ -88,10 +107,7 @@ function riempiTimeOTPForm(obj) {
 function riempiCounterOTPForm(obj) {
   document.getElementById("time-container").style.display = "none";
   document.getElementById("count-container").style.display = "flex";
-  const hotp = new jsOTP.hotp();
-  const timeCode = hotp.getOtp(obj.secret, obj.counter);
-  const prettyCountCode =
-    timeCode.substring(0, 3) + " " + timeCode.substring(3);
+  const prettyCountCode = formatValue(OPTService.getAuthCode(obj));
   document.getElementById("countNum").innerHTML = obj.counter;
 
   const otpCodeEl = document.getElementById("otpcode-count");
@@ -105,7 +121,7 @@ function verificaCodice() {
   const obj = getOTPById(idOTP);
   if (obj.type !== "totp") return alert("OTP counter non ancora implementato");
 
-  const codiceVero = new jsOTP.totp().getOtp(obj.secret);
+  const codiceVero = OPTService.getAuthCode(obj.secret);
   const codcieUtenteEl = document.getElementById("verificaCodcie");
   const codcieUtente = codcieUtenteEl.value.replaceAll(" ", "");
   codcieUtenteEl.value = "";
@@ -117,4 +133,41 @@ function verificaCodice() {
       "esito"
     ).innerHTML = `Codice inserito <i>${codcieUtente}</i> Scaduto ⌚ o Errato 🤬`;
 }
-export { stampaListaOTPSalvati, getOTPById, OTPSelezionato, verificaCodice };
+
+function handlePlusMinus({ currentTarget: t }) {
+  if (t.getAttribute("disabled") !== null) return;
+  const counterEl = document.getElementById("counter");
+
+  const authObj = getActualOTP();
+  if (t.id === "plus") authObj.counter++;
+  else authObj.counter--;
+  OPTService.save(authObj);
+  riempiCounterOTPForm(authObj);
+
+  gestPlusMinusEnable();
+}
+
+/**
+ * disabilita i bottoni di piu' o meno legati al counter auth
+ */
+function gestPlusMinusEnable() {
+  const plusBtn = document.getElementById("plus");
+  const minusBtn = document.getElementById("minus");
+  const authObj = getActualOTP();
+  if (authObj.type === "totp") {
+    minusBtn.setAttribute("disabled", true);
+    plusBtn.setAttribute("disabled", true);
+  } else {
+    plusBtn.removeAttribute("disabled");
+    if (authObj.counter === 0) minusBtn.setAttribute("disabled", true);
+    else minusBtn.removeAttribute("disabled");
+  }
+}
+
+export {
+  stampaListaOTPSalvati,
+  getOTPById,
+  OTPSelezionato,
+  verificaCodice,
+  handlePlusMinus,
+};
